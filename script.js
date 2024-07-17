@@ -1,10 +1,11 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const pipeGapTop = 100;
+const pipeGapTop = 150;
 const pipeGapBottom = 100;
 const minBottomGap = 150; // Hauteur minimale du bas du deuxième trou
-const distanceBetweenGaps = 10; // Distance entre le bas du premier trou et le haut du deuxième trou
+// const distanceBetweenGaps = 10; // Distance entre le bas du premier trou et le haut du deuxième trou
+const distanceBetweenGaps = 60; // Distance entre le bas du premier trou et le haut du deuxième trou
 
 const pipes = [];
 const pipeWidth = 30;
@@ -13,10 +14,20 @@ let frameCount = 0;
 let score = 0;
 let errors = 0;
 let isPaused = false;
+// let isPaused = true;
 let animationFrameId;
 
+// easy
 let pipeSpeed = 0.5; // vitesse d'arrivée des tuyaux
 let pipeInterval = 500; // fréquence d'apparition des tuyaux
+
+//medium
+// let pipeSpeed = 1.05; // vitesse d'arrivée des tuyaux
+// let pipeInterval = 300; // fréquence d'apparition des tuyaux
+
+//hard
+// let pipeSpeed = 1.5; // vitesse d'arrivée des tuyaux
+// let pipeInterval = 125; // fréquence d'apparition des tuyaux
 
 
 const questions = [
@@ -54,11 +65,23 @@ const bird = {
     y: 150,
     width: 20,
     height: 20,
+    // easy
     gravity: 0.09,
     lift: -3,
     velocity: 0,
+
+    // medium
+    // gravity: 0.29,
+    // lift: -5.5,
+
+    // hard
+    // gravity: 0.29,
+    // lift: -5.5,
+    velocity: 0,
     draw: function() {
-        ctx.fillStyle = "pink";
+        // ctx.fillStyle = "pink";
+        // ctx.fillStyle = "rgb(177, 220, 255)";
+        ctx.fillStyle = "yellow";
         ctx.fillRect(this.x, this.y, this.width, this.height);
     },
     update: function() {
@@ -83,10 +106,16 @@ const bird = {
 function drawPipes() {
     for (let i = pipes.length - 1; i >= 0; i--) {
         const pipe = pipes[i];
-        ctx.fillStyle = "#c2c2c2";
-        ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-        ctx.fillRect(pipe.x, pipe.top + pipeGapTop, pipeWidth, pipe.bottom - pipe.top - distanceBetweenGaps - pipeGapTop);
-        ctx.fillRect(pipe.x, pipe.bottom + pipeGapBottom, pipeWidth, canvas.height - pipe.bottom - pipeGapBottom);
+        // ctx.fillStyle = "#c2c2c2";
+        ctx.fillStyle = "rgb(128, 227, 42)"; // pipes color
+        // ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+        ctx.fillRect(pipe.x, 0, pipeWidth, 80);
+
+        // ctx.fillRect(pipe.x, pipe.top + pipeGapTop, pipeWidth, pipe.bottom - pipe.top - distanceBetweenGaps - pipeGapTop);
+        ctx.fillRect(pipe.x, 200, pipeWidth, 80);
+        
+        // ctx.fillRect(pipe.x, pipe.bottom + pipeGapBottom, pipeWidth, canvas.height - pipe.bottom - pipeGapBottom);
+        ctx.fillRect(pipe.x, 400, pipeWidth, canvas.height);
 
         pipe.x -= pipeSpeed;
 
@@ -101,7 +130,7 @@ function drawPipes() {
             let correctAnswer = questions[currentQuestionIndex].answer;
 
             if (bird.y < pipe.top || (bird.y > pipe.top + pipeGapTop && bird.y < pipe.bottom - distanceBetweenGaps) || bird.y > pipe.bottom + pipeGapBottom) {
-                resetGame();
+                // resetGame(); // remplacer par errors++
             } else if (!pipe.checked) {
                 pipe.checked = true;
 
@@ -134,17 +163,25 @@ function drawPipes() {
 }
 
 function addPipe() {
+    // const top = Math.floor(Math.random() * (canvas.height - distanceBetweenGaps - pipeGapTop - minBottomGap - 40)) + 20;
+    // const bottom = top + distanceBetweenGaps + pipeGapTop + Math.floor(Math.random() * (canvas.height - top - distanceBetweenGaps - pipeGapTop - minBottomGap - 20)) + 20;
     const top = Math.floor(Math.random() * (canvas.height - distanceBetweenGaps - pipeGapTop - minBottomGap - 40)) + 20;
     const bottom = top + distanceBetweenGaps + pipeGapTop + Math.floor(Math.random() * (canvas.height - top - distanceBetweenGaps - pipeGapTop - minBottomGap - 20)) + 20;
-    pipes.push({ x: canvas.width, top: top, bottom: bottom, checked: false });
+    // pipes.push({ x: canvas.width, top: top, bottom: bottom, checked: false });
+    pipes.push({ x: canvas.width, top: 120, bottom: 250, checked: false });
 }
 
 
 // QUESTION
 function showQuestion() {
+    if (currentQuestionIndex >= questions.length) {
+        document.getElementById('congratulations-container').style.display = 'flex';
+        return; // Arrête la fonction si toutes les questions ont été répondues
+    }
     const questionDiv = document.getElementById("question");
     questionDiv.innerText = questions[currentQuestionIndex].question;
 }
+
 
 function resetGame() {
     bird.y = 150;
@@ -154,8 +191,10 @@ function resetGame() {
     errors = 0;
     frameCount = 0;
     currentQuestionIndex = 0;
+    document.getElementById('congratulations-container').style.display = 'none'; // Masque la congratulations-container
     showQuestion();
 }
+
 
 function drawPauseScreen() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
@@ -169,9 +208,7 @@ function drawPauseScreen() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#000";
-    ctx.font = "15px Arial"; // Assurez-vous que la taille de la police est réinitialisée ici
-    ctx.textAlign = "left";
+
 
     if (isPaused) {
         drawPauseScreen();
@@ -184,7 +221,10 @@ function draw() {
         }
 
         drawPipes();
-
+        ctx.fillStyle = "rgb(31, 122, 196)";
+        ctx.font = "15px Arial"; // Assurez-vous que la taille de la police est réinitialisée ici
+        ctx.textAlign = "left";
+        
         ctx.fillText("Score: " + score, 10, 20);
         ctx.fillText("Erreurs: " + errors, 10, 40);
 
@@ -205,7 +245,8 @@ document.addEventListener("keydown", function(event) {
         bird.flap();
     } else if (event.code === "KeyP") {
         isPaused = !isPaused;
-        document.getElementById('controls').style.display = isPaused ? "block" : "none";
+        console.log("is paused ? " + isPaused);
+        document.getElementById('controls').style.display = isPaused ? "flex" : "none";
         if (isPaused) {
             cancelAnimationFrame(animationFrameId); // Arrête l'animation
         } else {
@@ -234,6 +275,97 @@ speedControl.addEventListener("input", function() {
     pipeSpeed = parseFloat(this.value);
 });
 
+
+// MODES DE DIFFICULTE
+const easyMode = document.getElementById('easyMode');
+const mediumMode = document.getElementById('mediumMode');
+const hardMode = document.getElementById('hardMode');
+
+easyMode.addEventListener('change', function() {
+    if (this.checked) {
+        setDifficulty('easy');
+    }
+});
+
+mediumMode.addEventListener('change', function() {
+    if (this.checked) {
+        setDifficulty('medium');
+    }
+});
+
+hardMode.addEventListener('change', function() {
+    if (this.checked) {
+        setDifficulty('hard');
+    }
+});
+
+function setDifficulty(level) {
+    switch (level) {
+        case 'easy':
+            bird.gravity = 0.09;
+            bird.lift = -3;
+            pipeSpeed = 0.5;
+            pipeInterval = 500;
+            // Met à jour les sliders
+            document.getElementById('gravityControl').value = 0.09;
+            document.getElementById('liftControl').value = 4; // Correspond à -3
+            document.getElementById('speedControl').value = 0.5;
+            document.getElementById('frequencyControl').value = 1; // Correspond à 500
+            break;
+        case 'medium':
+            bird.gravity = 0.29;
+            bird.lift = -5.5;
+            pipeSpeed = 1.05;
+            pipeInterval = 300;
+            // Met à jour les sliders
+            document.getElementById('gravityControl').value = 0.29;
+            document.getElementById('liftControl').value = 7; // Correspond à -5.6
+            document.getElementById('speedControl').value = 1.05;
+            document.getElementById('frequencyControl').value = 6; // Correspond à 300
+            break;
+        case 'hard':
+            bird.gravity = 0.5;
+            bird.lift = -7;
+            pipeSpeed = 1.5;
+            pipeInterval = 200;
+            // Met à jour les sliders
+            document.getElementById('gravityControl').value = 0.5;
+            document.getElementById('liftControl').value = 9; // Correspond à -7.2
+            document.getElementById('speedControl').value = 1.5;
+            document.getElementById('frequencyControl').value = 9; // Correspond à 200
+            break;
+    }
+}
+
+
+
+// SLIDERS
+
+// Convertir la valeur du slider en la valeur réelle de lift
+liftControl.addEventListener("input", function() {
+    const value = parseInt(this.value);
+    bird.lift = value * -0.8; // Convertit les valeurs internes en lift de -0.8 à -8
+});
+
+// FREQUENCES DES PIPES
+frequencyControl.addEventListener("input", function() {
+    const freq = parseInt(this.value);
+    pipeInterval = 550 - (freq - 1) * 50; // Convertit les niveaux 1 à 10 en intervalle 550 à 100
+});
+
+// GRAVITE DE L'OISEAU
+gravityControl.addEventListener("input", function() {
+    bird.gravity = parseFloat(this.value);
+});
+
+// VITESSE DES PIPES
+speedControl.addEventListener("input", function() {
+    pipeSpeed = parseFloat(this.value);
+});
+
+// Initialiser les sliders sur le mode facile au début du jeu
+setDifficulty('easy');
 resetGame();
 showQuestion();
 animationFrameId = requestAnimationFrame(draw);
+

@@ -1,0 +1,103 @@
+* {
+    font-family: Arial;
+    font-size: medium;
+}
+.container {
+    text-align: center;
+    width: 320px;
+    /* display: flex; */
+    position: relative;
+}
+canvas {
+    display: block;
+    /* margin: 0 auto;             */
+    /* background: linear-gradient(white 48%, rgb(0, 31, 65) 52%); */
+    background: linear-gradient(rgb(208, 234, 255) 48%, rgb(116, 192, 255) 52%);
+    /* background-color: rgb(164, 214, 255); */
+    /* color: rgb(31, 122, 196); */
+}
+
+
+
+#question {
+    /* text-align: center; */
+    /* font-size: 24px; */
+    margin-bottom: 10px;
+}
+.controls-container {
+    display: none;
+    text-align: center;
+    position: absolute;
+    /* display: flex; */
+
+    /* display: none; */
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* padding:10%; */
+    width: 80%;
+    left: 10%;
+    top: 15%;
+    height: 100%;
+}
+.controls {
+    /* margin: 10px 10%; */
+    border-radius: 2px;
+    padding: 15px;
+    background-color: rgb(164, 214, 255);
+    background-color: rgb(128, 227, 42);
+    background-color: rgba(246, 251, 255, 0.6);
+    /* background-color: rgb(177, 220, 255); */
+    
+}
+.slider {
+    width: 100%;
+    max-width: 320px;
+    margin: 10px auto;
+    display: block;
+}
+
+.bg-text {
+    font-weight: bolder;
+    font-size: 2.8rem;
+    display: none;
+}
+
+#true {
+    position:absolute;
+    text-align: center;
+    width: 100%;
+    top : 100px; 
+    color: rgb(116, 192, 255);
+}
+
+#false {
+    position:absolute;
+    text-align: center;
+    width: 100%;
+    top : 300px;
+    color:rgb(208, 234, 255); 
+}
+
+.congratulations-container {
+    text-align: center;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: none;
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* padding:10%; */
+    width: 80%;
+    left: 10%;
+    top: 40%;
+    /* height: 75%; */
+    height: 20%;
+    background-color: rgba(246, 251, 255, 0.85);
+}
+
+.congratulations-container h2 {
+    font-size: x-large;
+}
