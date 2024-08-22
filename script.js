@@ -267,7 +267,7 @@ function drawPauseScreen() {
     ctx.fillStyle = "rgb(44, 142, 222)";
     ctx.font = "600 20px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("Press any Key to Start", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("Click to Start", canvas.width / 2, canvas.height / 2);
 }
 
 function draw() {
