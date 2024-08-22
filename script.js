@@ -13,8 +13,9 @@ const pipeGap = 100;
 let frameCount = 0;
 let score = 0;
 let errors = 0;
-let isPaused = false;
-// let isPaused = true;
+// let isPaused = false;
+let isPaused = true;
+let isStarted = false;
 let animationFrameId;
 
 // easy
@@ -28,7 +29,6 @@ let pipeInterval = 500; // fréquence d'apparition des tuyaux
 //hard
 // let pipeSpeed = 1.5; // vitesse d'arrivée des tuyaux
 // let pipeInterval = 125; // fréquence d'apparition des tuyaux
-
 
 const questions = [
     { question: "2 == 2", answer: true },
@@ -55,10 +55,74 @@ const questions = [
     { question: "!((2 == 3) || (3 == 4))", answer: true },
     { question: "((1 + 1 == 2) && (2 + 2 == 4))", answer: true },
     { question: "!((1 + 1 == 2) && (2 + 2 == 5))", answer: true },
+    { question: "(5 > 3) && (2 < 4)", answer: true },
+    { question: "(5 < 3) || (2 > 4)", answer: false },
+    { question: "!(5 == 5)", answer: false },
+    { question: "(10 >= 10) && (5 <= 5)", answer: true },
+    { question: "(10 > 10) || (5 < 5)", answer: false },
+    { question: "!(10 > 9) || !(5 < 6)", answer: false },
+    { question: "!(10 != 10) && (3 === 3)", answer: true },
+    { question: "(2 !== 2) || (3 === 3)", answer: true },
+    { question: "(2 === '2') && (3 !== '3')", answer: false },
+    { question: "!(2 === 2) && (3 !== 3)", answer: false },
+    { question: "(4 % 2 === 0) && (3 % 2 !== 0)", answer: true },
+    { question: "!(4 % 2 === 0) || (3 % 2 === 0)", answer: false },
+    { question: "(5 > 3) && !(2 < 4)", answer: false },
+    { question: "!(5 > 3) || (2 > 4)", answer: false },
+    { question: "!(5 === 5) && !(3 !== 3)", answer: false },
+    { question: "(1 < 2) && (2 < 3) && (3 < 4)", answer: true },
+    { question: "!(1 > 2) || !(2 > 3) || !(3 > 4)", answer: true },
+    { question: "(1 > 2) && (2 > 3) && (3 > 4)", answer: false },
+    { question: "true", answer: true },
+    { question: "false", answer: false },
+    { question: "!(true)", answer: false },
+    { question: "!(false)", answer: true },
+    { question: "2 > 1", answer: true },
+    { question: "1 > 2", answer: false },
+    { question: "2 == 2", answer: true },
+    { question: "2 != 2", answer: false },
+    { question: "3 < 4", answer: true },
+    { question: "4 < 3", answer: false },
+    { question: "1 + 1 == 2", answer: true },
+    { question: "1 + 1 == 3", answer: false },
+    { question: "5 - 2 == 3", answer: true },
+    { question: "5 - 2 == 4", answer: false },
+    { question: "10 >= 5", answer: true },
+    { question: "5 <= 10", answer: true },
+    { question: "10 < 5", answer: false },
+    { question: "10 > 5", answer: true },
+    { question: "'a' == 'a'", answer: true },
+    { question: "'a' != 'a'", answer: false },
+    { question: "3 > 2", answer: true },
+    { question: "2 > 3", answer: false },
+    { question: "3 == 3", answer: true },
+    { question: "3 != 3", answer: false },
+    { question: "4 <= 4", answer: true },
+    { question: "4 >= 5", answer: false },
+    { question: "5 == 5", answer: true },
+    { question: "5 != 5", answer: false },
+    { question: "7 - 3 == 4", answer: true },
+    { question: "7 - 3 == 5", answer: false },
+    { question: "2 + 2 == 4", answer: true },
+    { question: "2 + 2 == 5", answer: false },
+    { question: "9 >= 9", answer: true },
+    { question: "9 <= 8", answer: false },
+    { question: "6 * 1 == 6", answer: true },
+    { question: "6 * 1 == 7", answer: false },
+    { question: "8 / 4 == 2", answer: true },
+    { question: "8 / 4 == 3", answer: false },
+    { question: "'hello' == 'hello'", answer: true },
+    { question: "'hello' == 'world'", answer: false }
 ];
 
-let currentQuestionIndex = 0;
+
+// let currentQuestionIndex = 0;
+let currentQuestionIndex = pickRandomAnswerIndex();
 let incorrectAnswers = [];
+
+function pickRandomAnswerIndex(){
+    return Math.floor(Math.random() * questions.length);
+}
 
 const bird = {
     x: 50,
@@ -135,10 +199,11 @@ function drawPipes() {
                 pipe.checked = true;
 
                 if (bird.y > pipe.top && bird.y < pipe.top + pipeGapTop) {
-                    console.log(1);  // Passed through the top gap
+                    // console.log(1);  // Passed through the top gap
                     if (correctAnswer) {
                         score++;
-                        currentQuestionIndex++;
+                        currentQuestionIndex = pickRandomAnswerIndex();
+                        // currentQuestionIndex++;
                         showQuestion();
                     } else {
                         incorrectAnswers.push({ question: questions[currentQuestionIndex].question, userAnswer: true });
@@ -146,10 +211,10 @@ function drawPipes() {
                         // resetGame();
                     }
                 } else if (bird.y > pipe.bottom && bird.y < pipe.bottom + pipeGapBottom) {
-                    console.log(2);  // Passed through the bottom gap
+                    // console.log(2);  // Passed through the bottom gap
                     if (!correctAnswer) {
                         score++;
-                        currentQuestionIndex++;
+                        currentQuestionIndex = pickRandomAnswerIndex();
                         showQuestion();
                     } else {
                         incorrectAnswers.push({ question: questions[currentQuestionIndex].question, userAnswer: false });
@@ -190,27 +255,25 @@ function resetGame() {
     score = 0;
     errors = 0;
     frameCount = 0;
-    currentQuestionIndex = 0;
+    currentQuestionIndex = pickRandomAnswerIndex();
     document.getElementById('congratulations-container').style.display = 'none'; // Masque la congratulations-container
     showQuestion();
 }
 
 
 function drawPauseScreen() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#fff";
-    ctx.font = "12px Arial";
+    ctx.fillStyle = "rgb(44, 142, 222)";
+    ctx.font = "600 20px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("PAUSE", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("Press any Key to Start", canvas.width / 2, canvas.height / 2);
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-
-    if (isPaused) {
+    if (!isStarted) {
         drawPauseScreen();
     } else {
         bird.draw();
@@ -238,9 +301,18 @@ canvas.addEventListener("click", function() {
     if (!isPaused) {
         bird.flap();
     }
+
+    if (!isStarted) {
+        isStarted = true;
+        isPaused = false;
+    }
 });
 
 document.addEventListener("keydown", function(event) {
+    if(!isStarted) {
+        isStarted = true;
+        isPaused = false;
+    }
     if (event.code === "Space" && !isPaused) {
         bird.flap();
     } else if (event.code === "KeyP") {
