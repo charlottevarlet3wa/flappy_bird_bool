@@ -143,8 +143,6 @@ const bird = {
     // lift: -5.5,
     velocity: 0,
     draw: function() {
-        // ctx.fillStyle = "pink";
-        // ctx.fillStyle = "rgb(177, 220, 255)";
         ctx.fillStyle = "yellow";
         ctx.fillRect(this.x, this.y, this.width, this.height);
     },
@@ -267,13 +265,22 @@ function drawPauseScreen() {
     ctx.fillStyle = "rgb(44, 142, 222)";
     ctx.font = "600 20px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("Click to Start", canvas.width / 2, canvas.height / 2);
+    ctx.fillText("Press Enter to Start", canvas.width / 2, canvas.height / 2);
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!isStarted) {
+        bird.draw();
+        
+        ctx.fillStyle = "rgb(31, 122, 196)";
+        ctx.font = "15px Arial"; // Assurez-vous que la taille de la police est réinitialisée ici
+        ctx.textAlign = "left";
+        
+        ctx.fillText("Score: " + score, 10, 20);
+        ctx.fillText("Erreurs: " + errors, 10, 40)
+
         drawPauseScreen();
     } else {
         bird.draw();
@@ -297,19 +304,8 @@ function draw() {
     animationFrameId = requestAnimationFrame(draw);
 }
 
-canvas.addEventListener("click", function() {
-    if (!isPaused) {
-        bird.flap();
-    }
-
-    if (!isStarted) {
-        isStarted = true;
-        isPaused = false;
-    }
-});
-
 document.addEventListener("keydown", function(event) {
-    if(!isStarted) {
+    if(!isStarted && event.key === 'Enter') {
         isStarted = true;
         isPaused = false;
     }
