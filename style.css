@@ -64,6 +64,7 @@ canvas {
 }
 
 #true {
+    color: rgb(183, 255, 0)
     position:absolute;
     text-align: center;
     width: 100%;
